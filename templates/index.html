@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwritten Notes Study Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📚 Handwritten Notes Study Assistant</h1>
+            <p>Upload your handwritten notes and get instant answers, summaries, and study materials</p>
+        </header>
+
+        <!-- Status Bar -->
+        <div class="status-bar" id="statusBar">
+            <span id="statusText">No PDF uploaded</span>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Upload Section -->
+            <section class="card upload-section" id="uploadSection">
+                <h2>📄 Upload PDF</h2>
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="pdfInput" accept=".pdf" hidden>
+                    <div class="upload-prompt">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>Click to upload or drag and drop</p>
+                        <small>PDF files only (max 50MB)</small>
+                    </div>
+                    <button class="btn btn-primary" onclick="document.getElementById('pdfInput').click()">
+                        Choose PDF File
+                    </button>
+                </div>
+                <div class="progress-container" id="progressContainer" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="progressText">Processing...</p>
+                </div>
+            </section>
+
+            <!-- Tabs -->
+            <div class="tabs" id="mainTabs" style="display: none;">
+                <button class="tab-btn active" onclick="switchTab('qa')">💬 Q&A</button>
+                <button class="tab-btn" onclick="switchTab('mcq')">📝 MCQs</button>
+                <button class="tab-btn" onclick="switchTab('summary')">📋 Summary</button>
+                <button class="tab-btn" onclick="switchTab('notes')">📖 Notes</button>
+                <button class="tab-btn" onclick="switchTab('export')">💾 Export</button>
+            </div>
+
+            <!-- Q&A Tab -->
+            <section class="card tab-content active" id="qaTab">
+                <h2>💬 Ask Questions</h2>
+                <div class="chat-container" id="chatContainer">
+                    <div class="chat-message bot-message">
+                        <strong>Assistant:</strong> Hello! I've processed your notes. Ask me anything!
+                    </div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="questionInput" placeholder="Ask a question about your notes..." 
+                           onkeypress="handleQuestionKeyPress(event)">
+                    <button class="btn btn-primary" onclick="askQuestion()">Send</button>
+                </div>
+            </section>
+
+            <!-- MCQ Tab -->
+            <section class="card tab-content" id="mcqTab">
+                <h2>📝 Generate MCQs</h2>
+                <div class="form-group">
+                    <label>Topic (optional):</label>
+                    <input type="text" id="mcqTopic" placeholder="Leave empty for general questions">
+                </div>
+                <div class="form-group">
+                    <label>Number of Questions:</label>
+                    <input type="number" id="mcqCount" value="5" min="1" max="10">
+                </div>
+                <button class="btn btn-primary" onclick="generateMCQ()">Generate MCQs</button>
+                <div id="mcqResults" class="results-container"></div>
+            </section>
+
+            <!-- Summary Tab -->
+            <section class="card tab-content" id="summaryTab">
+                <h2>📋 Generate Summary</h2>
+                <div class="form-group">
+                    <label>Topic (optional):</label>
+                    <input type="text" id="summaryTopic" placeholder="Leave empty for full summary">
+                </div>
+                <button class="btn btn-primary" onclick="generateSummary()">Generate Summary</button>
+                <div id="summaryResults" class="results-container"></div>
+            </section>
+
+            <!-- Notes Tab -->
+            <section class="card tab-content" id="notesTab">
+                <h2>📖 Generate Study Notes</h2>
+                <div class="form-group">
+                    <label>Topic (optional):</label>
+                    <input type="text" id="notesTopic" placeholder="Leave empty for all topics">
+                </div>
+                <button class="btn btn-primary" onclick="generateNotes()">Generate Notes</button>
+                <div id="notesResults" class="results-container"></div>
+            </section>
+
+            <!-- Export Tab -->
+            <section class="card tab-content" id="exportTab">
+                <h2>💾 Export & Download</h2>
+                <div class="export-options">
+                    <div class="export-card">
+                        <h3>📄 Export to PDF</h3>
+                        <p>Download generated content as PDF document</p>
+                        <button class="btn btn-secondary" onclick="exportToPDF()">Export PDF</button>
+                    </div>
+                    <div class="export-card">
+                        <h3>📝 Export to DOCX</h3>
+                        <p>Download as editable Word document</p>
+                        <button class="btn btn-secondary" onclick="exportToDOCX()">Export DOCX</button>
+                    </div>
+                    <div class="export-card">
+                        <h3>🤖 Offline Chatbot</h3>
+                        <p>Download standalone chatbot package</p>
+                        <button class="btn btn-secondary" onclick="downloadChatbot()">Download Package</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Content to Export:</label>
+                    <textarea id="exportContent" rows="10" placeholder="Generated content will appear here..."></textarea>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Processing...</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
